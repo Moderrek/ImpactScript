@@ -1,6 +1,5 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.20'
-    id 'application'
     id 'java-library'
     id 'maven-publish'
 }
@@ -22,10 +21,6 @@ test {
 
 kotlin {
     jvmToolchain(17)
-}
-
-application {
-    mainClassName = 'com.impact.script.MainKt'
 }
 
 publishing {
