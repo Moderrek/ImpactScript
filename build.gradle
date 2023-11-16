@@ -1,0 +1,37 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
+    id 'application'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = 'com.impact.script'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+application {
+    mainClassName = 'com.impact.script.MainKt'
+}
+
+publishing {
+    publications {
+        mavenJava (MavenPublication) {
+            from components.java
+        }
+    }
+}
