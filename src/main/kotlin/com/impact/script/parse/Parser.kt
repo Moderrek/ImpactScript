@@ -28,6 +28,15 @@ class Parser(private val tokens: List<Token>) {
     return null
   }
 
+  private fun matchTypeVal(type: TokenType, value: String, offset: Int = 0): Boolean {
+    return peek(offset) != null && peek(offset)!!.type == type
+            && peek(offset)!!.value != null && peek(offset)!!.value == value
+  }
+
+  private fun match(type: TokenType, offset: Int = 0): Boolean {
+    return peek(offset) != null && peek(offset)!!.type == type
+  }
+
   private fun consume(): Token {
     return tokens[index++]
   }
@@ -38,6 +47,9 @@ class Parser(private val tokens: List<Token>) {
     }
     when (val strLiteral = tryConsume(TokenType.STR_LITERAL)) {
       is Token -> return NodeTermStr(strLiteral.value!!)
+    }
+    when (val identifierLiteral = tryConsume(TokenType.IDENTIFIER_LITERAL)) {
+      is Token -> return NodeTermIdentifier(identifierLiteral.value!!)
     }
     return null
   }
@@ -69,5 +81,46 @@ class Parser(private val tokens: List<Token>) {
       }
     }
     return lhs
+  }
+
+  fun parseStatement(): NodeStmt? {
+    if (peek() == null) return null
+    if (peek()!!.type == TokenType.IDENTIFIER_LITERAL && peek(1) != null && peek(1)!!.type == TokenType.EQUAL) {
+      val identifier = NodeTermIdentifier(consume().value!!)
+      consume()
+      val expr = parseExpression() ?: throw Exception("Invalid expression")
+      return NodeStmtLet(identifier, expr)
+    }
+    if (matchTypeVal(TokenType.IDENTIFIER_LITERAL, "log") && match(TokenType.LPARA, 1)) {
+      consume()
+      consume()
+      val expr = parseExpression() ?: throw Exception("Invalid expression")
+      tryConsume(TokenType.RPARA, "expected ) got something other")
+      return NodeStmtLog(expr)
+    }
+    return null
+  }
+
+  fun parseProgram(): List<Node> {
+    val nodes: MutableList<Node> = mutableListOf<Node>()
+    if (peek() != null && peek()!!.type == TokenType.LINE_SEPARATOR) consume()
+    while (peek() != null) {
+      when (val stmt = parseStatement()) {
+        null -> {}
+        else -> {
+          nodes.add(stmt)
+          continue
+        }
+      }
+      when (val expr = parseExpression()) {
+        null -> {}
+        else -> {
+          nodes.add(expr)
+          continue
+        }
+      }
+      if (match(TokenType.LINE_SEPARATOR)) consume()
+    }
+    return nodes
   }
 }

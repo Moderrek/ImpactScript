@@ -12,5 +12,8 @@ enum class TokenType {
   TRUE,
   FALSE,
   PLUS_EQUAL,
-  EQUAL
+  EQUAL,
+  LINE_SEPARATOR,
+  LPARA,
+  RPARA
 }

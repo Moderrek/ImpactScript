@@ -22,6 +22,13 @@ class Lexer {
     position = Position()
     val tokens: MutableList<Token> = mutableListOf<Token>()
     while (peek() != null) {
+      // new line
+      if (peek() == '\n' || peek() == ';') {
+        if (tokens.lastOrNull() == null || tokens.last().type != TokenType.LINE_SEPARATOR)
+          tokens.add(Token(TokenType.LINE_SEPARATOR))
+        consume()
+        continue
+      }
       // whitespace
       if (peek()!!.isWhitespace()) {
         consume()
@@ -81,6 +88,12 @@ class Lexer {
       }
       // others sequences
       val buffer = StringBuilder()
+      buffer.append(consume())
+      if (operators.containsKey(buffer.toString())) {
+        val token = Token(operators[buffer.toString()]!!)
+        tokens.add(token)
+        continue
+      }
       while (peek() != null && !peek()!!.isWhitespace()) {
         buffer.append(consume())
       }
@@ -92,6 +105,8 @@ class Lexer {
       // unknown
       throw Exception("Unknown sequence '$buffer' @ $position")
     }
+    if (tokens.lastOrNull() == null || tokens.last().type != TokenType.LINE_SEPARATOR)
+      tokens.add(Token(TokenType.LINE_SEPARATOR))
     return tokens
   }
 }

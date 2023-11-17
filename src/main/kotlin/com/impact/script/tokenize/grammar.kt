@@ -8,11 +8,15 @@ val operatorPrecedence: HashMap<TokenType, UInt> = hashMapOf(
 )
 
 val operators: HashMap<String, TokenType> = hashMapOf(
+  Pair(";", TokenType.LINE_SEPARATOR),
   Pair("+", TokenType.PLUS),
   Pair("-", TokenType.MINUS),
   Pair("*", TokenType.ASTERISK),
   Pair("/", TokenType.SLASH),
-  Pair("+=", TokenType.PLUS_EQUAL)
+  Pair("=", TokenType.EQUAL),
+  Pair("+=", TokenType.PLUS_EQUAL),
+  Pair("(", TokenType.LPARA),
+  Pair(")", TokenType.RPARA)
 )
 
 val keywords: HashMap<String, TokenType> = hashMapOf(
